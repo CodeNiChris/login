@@ -1,13 +1,13 @@
 <?php
 
-$dbHost = 'aws-0-ap-northeast-1.pooler.supabase.com';
-$dbUser = 'postgres.fdpiddtxihemhdwllyjm';
+$dbHost = '127.0.0.1';
+$dbUser = 'root';
 
 $local = file_exists(__DIR__ . '/config.local.php') ? require __DIR__ . '/config.local.php' : [];
 
-$dbPassword = getenv('SUPABASE_DB_PASSWORD') ?: ($local['SUPABASE_DB_PASSWORD'] ?? '');
+$dbPassword = '';
 
-$conn = pg_connect("host=$dbHost port=5432 dbname=postgres user=$dbUser password=$dbPassword sslmode=require");
+$conn = new mysqli($dbHost, $dbUser, $dbPassword, "bscs");
 
 if (!$conn) {
     exit('Database connection failed.');

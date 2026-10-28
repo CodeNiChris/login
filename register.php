@@ -24,9 +24,9 @@ if ($_SERVER['REQUEST_METHOD'] == "POST") {
     }
 
     // " ynzon salas "
-    $result = pg_query_params($conn, 'SELECT username FROM users WHERE username = $1', [$username]);
+    $result = mysqli_query($conn, "SELECT username FROM users WHERE username = '$username'");
 
-    if (pg_fetch_assoc($result)) {
+    if (mysqli_fetch_assoc($result)) {
         $errors[] = "Username already exist";
     }
 
@@ -48,10 +48,9 @@ if ($_SERVER['REQUEST_METHOD'] == "POST") {
 
     $passwordHash = password_hash($password, PASSWORD_BCRYPT);
     if (empty($errors)) {
-        pg_query_params(
+        mysqli_query(
             $conn,
-            'INSERT INTO users (username, password) VALUES ($1, $2)',
-            [$username, $passwordHash]
+            "INSERT INTO users (username, password) VALUES ('$username', '$passwordHash')"
         );
 
         echo "Registered Successfully";

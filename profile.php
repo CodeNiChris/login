@@ -11,8 +11,8 @@ $errors = [];
 $success = "";
 
 $username = $_SESSION['username'];
-$result = pg_query_params($conn, 'SELECT * FROM users WHERE username = $1', [$username]);
-$user = pg_fetch_assoc($result);
+$result = mysqli_query($conn, "SELECT * FROM users WHERE username = '$username'");
+$user = mysqli_fetch_assoc($result);
 
 if (!$user) {
     session_destroy();
@@ -21,18 +21,32 @@ if (!$user) {
 }
 
 if ($_SERVER['REQUEST_METHOD'] == "POST") {
-    $address = trim($_POST['address']); // Bata Prk bato ambot ano na, bacolod
-
+    $address = trim($_POST['address']);
+    $pnumber = trim($_POST['pnumber']);
+    $gender = trim($_POST['dGender']);
+    
 
     if (empty($address)) {
         $errors[] = "Address is required";
     }
 
+    if (empty($pnumber)) {
+        $errors[] = "Phone Number is required";
+    }
+
+    if (!is_numeric($pnumber)) {
+        $errors[] = "Phone Number must be Numerical";
+    }
+
+    if (!strlen((string) $pnumber) == 11) {
+        $errors[] = "Phone Number must be 11 digits";
+    } 
+    
+
     if (empty($errors)) {
-        pg_query_params(
+        mysqli_query(
             $conn,
-            'UPDATE users SET address = $1 WHERE username = $2',
-            [$address, $username]
+            "UPDATE users SET address = '$address', phone_number = '$pnumber', gender = '$gender' WHERE username = '$username'",
         );
 
         // $user['address'] = trim($_POST['address']);
@@ -56,6 +70,16 @@ if ($_SERVER['REQUEST_METHOD'] == "POST") {
         <label for="address">Address:</label>
         <input type="text" name="address" value="">
         <input type="hidden" name="id" value="<?php echo $user['id']; ?>">
+        <br><br>
+        <label for="pnumber">Phone Number:</label>
+        <input type="text" name="pnumber" value="">
+        <input type="hidden" name="id" value="<?php echo $user['id']; ?>">
+        <br><br>
+        <label for="dGender">Gender:</label>
+        <select name = "dGender" id="dGender">
+        <option value = "male">Male</option>
+        <option value = "female">Female</option>
+        </select>
         <br><br>
         <button type="submit">Update</button>
     </form>
